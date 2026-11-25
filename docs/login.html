@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice</a>
+      <a class="nav-cta" href="register.html">Get Started</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="auth-wrap">
+      <div class="auth-aside">
+        <div class="eyebrow">WELCOME BACK</div>
+        <h1>Your next opportunity starts with <em>one practice.</em></h1>
+        <p>Sign in to continue your preparation, review results, and build placement readiness.</p>
+        <div class="quote">“Success is the sum of small efforts, repeated day in and day out.”</div>
+      </div>
+
+      <form class="auth-card" onsubmit="event.preventDefault(); doLogin();">
+        <div class="eyebrow">STUDENT ACCESS</div>
+        <h2>Sign in</h2>
+        <p class="muted">Enter your account details below.</p>
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="you@example.com" value="student@preppilot.com" required>
+        <label>Password</label>
+        <input type="password" id="login-pass" value="password123" required>
+        <button class="btn primary full" type="submit">Sign in <span>→</span></button>
+        <p class="auth-bottom">New to PrepPilot? <a href="register.html">Create an account</a></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    function doLogin() {
+      const email = document.getElementById("login-email").value;
+      const name = email.split("@")[0];
+      Storage.setUser(name.charAt(0).toUpperCase() + name.slice(1), email);
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>

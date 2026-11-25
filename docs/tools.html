@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study Tools | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice Mode</a>
+      <a href="cheatsheets.html">Cheatsheets</a>
+      <a href="results.html">My Results</a>
+      <a href="tools.html" style="color:var(--purple);">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="dashboard.html">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-heading">
+      <div class="eyebrow">YOUR PERSONAL WORKSPACE</div>
+      <h1>Study <em>Tools.</em></h1>
+      <p class="muted">Set daily targets, plan your preparation, and revise saved questions.</p>
+    </div>
+
+    <div class="tools-grid">
+      <!-- DAILY TARGET -->
+      <section class="tool-panel">
+        <div class="eyebrow">DAILY TARGET</div>
+        <h2>Build a daily habit</h2>
+        <p class="muted">Choose how many practice tests you want to complete each day.</p>
+        <form class="tool-form" onsubmit="event.preventDefault(); saveGoal();">
+          <label>Tests per day</label>
+          <input type="number" id="goal-input" min="1" max="20" value="2" required>
+          <button class="btn primary" type="submit">Save Daily Goal</button>
+        </form>
+      </section>
+
+      <!-- STUDY PLANNER -->
+      <section class="tool-panel">
+        <div class="eyebrow">STUDY PLANNER</div>
+        <h2>Add a preparation task</h2>
+        <form class="tool-form" onsubmit="event.preventDefault(); handleAddPlan();">
+          <label>Task title</label>
+          <input id="plan-title" placeholder="Example: Practice Cryptarithmetic" required>
+          <label>Subject</label>
+          <select id="plan-subject">
+            <option>Aptitude</option>
+            <option>Reasoning</option>
+            <option>Verbal</option>
+            <option>Programming</option>
+            <option>Interview</option>
+          </select>
+          <label>Due date</label>
+          <input type="date" id="plan-due" required>
+          <button class="btn primary" type="submit">Add Task</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- UPCOMING TASKS LIST -->
+    <section class="tool-panel tool-wide">
+      <div class="section-heading" style="margin-top:0;">
+        <div>
+          <div class="eyebrow">YOUR PLAN</div>
+          <h2>Upcoming Tasks</h2>
+        </div>
+      </div>
+      <div class="plan-list" id="plan-list-container">
+        <!-- Injected -->
+      </div>
+    </section>
+
+    <!-- BOOKMARKED REVISION VAULT -->
+    <section class="tool-panel tool-wide">
+      <div class="section-heading" style="margin-top:0;">
+        <div>
+          <div class="eyebrow">REVISION VAULT</div>
+          <h2>Bookmarked Questions</h2>
+        </div>
+      </div>
+      <div class="bookmark-list" id="bookmark-list-container">
+        <!-- Injected -->
+      </div>
+    </section>
+
+    <a class="btn secondary back-btn" href="dashboard.html">← Back to Dashboard</a>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("goal-input").value = Storage.getGoal();
+      renderPlans();
+      renderBookmarks();
+    });
+
+    function saveGoal() {
+      const val = document.getElementById("goal-input").value;
+      Storage.setGoal(val);
+      alert("Daily goal updated to " + val + " tests per day!");
+    }
+
+    function handleAddPlan() {
+      const title = document.getElementById("plan-title").value.trim();
+      const subject = document.getElementById("plan-subject").value;
+      const due = document.getElementById("plan-due").value;
+      if (!title || !due) return;
+
+      Storage.addPlan(title, subject, due);
+      document.getElementById("plan-title").value = "";
+      renderPlans();
+    }
+
+    function renderPlans() {
+      const plans = Storage.getPlans();
+      const container = document.getElementById("plan-list-container");
+      if (plans.length === 0) {
+        container.innerHTML = `<div class="empty">No tasks added yet. Create your first preparation milestone above.</div>`;
+        return;
+      }
+
+      container.innerHTML = plans.map(p => `
+        <div class="plan-item">
+          <button class="check-btn" onclick="togglePlanItem(${p.id})">
+            ${p.completed ? '✓' : '○'}
+          </button>
+          <div class="plan-info">
+            <strong class="${p.completed ? 'completed-task' : ''}">${p.title}</strong>
+            <small>${p.subject} · Due ${p.due_date}</small>
+          </div>
+          <button class="delete-btn" onclick="deletePlanItem(${p.id})">×</button>
+        </div>
+      `).join("");
+    }
+
+    function togglePlanItem(id) {
+      Storage.togglePlan(id);
+      renderPlans();
+    }
+
+    function deletePlanItem(id) {
+      Storage.deletePlan(id);
+      renderPlans();
+    }
+
+    function renderBookmarks() {
+      const bmIds = Storage.getBookmarks();
+      const container = document.getElementById("bookmark-list-container");
+      const bookmarkedQuestions = QUESTIONS.filter(q => bmIds.includes(q.id));
+
+      if (bookmarkedQuestions.length === 0) {
+        container.innerHTML = `<div class="empty">No questions saved yet. Bookmark questions during tests or practice to revise them here.</div>`;
+        return;
+      }
+
+      container.innerHTML = bookmarkedQuestions.map(q => {
+        const ansVal = q[`option_${q.answer.toLowerCase()}`];
+        return `
+          <article class="bookmark-item">
+            <div class="eyebrow">${q.category} · ${q.topic}</div>
+            <h3>${q.question}</h3>
+            <p><strong>Correct Answer: Option ${q.answer}</strong> — ${ansVal}</p>
+            ${q.explanation ? `<p class="muted">${q.explanation}</p>` : ''}
+            <button class="bookmark-btn" onclick="removeBmItem(${q.id})">Remove from Vault</button>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function removeBmItem(qid) {
+      Storage.toggleBookmark(qid);
+      renderBookmarks();
+    }
+  </script>
+</body>
+</html>

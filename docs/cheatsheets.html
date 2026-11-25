@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Placement Cheatsheets & Formulas | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice Mode</a>
+      <a href="cheatsheets.html" style="color:var(--purple);">Cheatsheets</a>
+      <a href="results.html">My Results</a>
+      <a href="tools.html">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="dashboard.html">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-heading">
+      <div class="eyebrow">QUICK REVISION VAULT</div>
+      <h1>Formulas & Placement <em>Cheatsheets.</em></h1>
+      <p class="muted">Rapid reference guides for mental math shortcuts, reasoning deduction rules, and HR interview answers.</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="cheatsheet-tabs" id="sheet-tabs">
+      <button class="sheet-tab active" onclick="switchSheet('aptitude', this)">
+        <span class="sheet-tab-icon">∑</span>
+        <span>Quantitative Aptitude</span>
+      </button>
+      <button class="sheet-tab" onclick="switchSheet('reasoning', this)">
+        <span class="sheet-tab-icon">⌘</span>
+        <span>Logical Reasoning</span>
+      </button>
+      <button class="sheet-tab" onclick="switchSheet('technical', this)">
+        <span class="sheet-tab-icon">&lt;/&gt;</span>
+        <span>CS Fundamentals</span>
+      </button>
+      <button class="sheet-tab" onclick="switchSheet('interview', this)">
+        <span class="sheet-tab-icon">★</span>
+        <span>HR Interview Prep</span>
+      </button>
+    </div>
+
+    <!-- SHEET CONTENT -->
+    <section class="cheatsheet-content" id="sheet-display-area">
+      <!-- Injected -->
+    </section>
+
+    <div class="cta-banner" style="margin-top: 40px;">
+      <div>
+        <h3>Put these formulas into practice!</h3>
+        <p>Test your speed and memory retention with a timed quiz or self-paced practice.</p>
+      </div>
+      <a href="practice.html" class="btn primary">
+        Open Practice Mode <span>→</span>
+      </a>
+    </div>
+
+    <a class="btn secondary back-btn" href="dashboard.html">← Back to Dashboard</a>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    let currentTab = "aptitude";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderSheet(currentTab);
+    });
+
+    function switchSheet(key, btn) {
+      currentTab = key;
+      document.querySelectorAll(".sheet-tab").forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+      renderSheet(key);
+    }
+
+    function renderSheet(key) {
+      const sheet = CHEATSHEETS[key];
+      const area = document.getElementById("sheet-display-area");
+
+      area.innerHTML = `
+        <div class="sheet-banner">
+          <div>
+            <h2>${sheet.title}</h2>
+            <p class="muted">${sheet.description}</p>
+          </div>
+          <div class="sheet-pill-badge">
+            ${sheet.sections.length} Topic Modules
+          </div>
+        </div>
+
+        <div class="sheet-sections">
+          ${sheet.sections.map(sec => `
+            <div class="sheet-section-card">
+              <div class="section-title-bar">
+                <h3>${sec.name}</h3>
+                <span class="rule-count">${sec.rules.length} Formulas / Rules</span>
+              </div>
+
+              <div class="sheet-rules-grid">
+                ${sec.rules.map(rule => `
+                  <div class="rule-card">
+                    <span class="rule-label">${rule.label}</span>
+                    <div class="rule-formula-box">
+                      <code>${rule.formula}</code>
+                    </div>
+                    ${rule.note ? `<p class="rule-note"><strong>Note / Example:</strong> ${rule.note}</p>` : ''}
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Practice Exam | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice Mode</a>
+      <a href="cheatsheets.html">Cheatsheets</a>
+      <a href="results.html">My Results</a>
+      <a href="tools.html">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="dashboard.html">Exit Exam</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="quiz-head">
+      <div>
+        <div class="eyebrow" id="quiz-eyebrow">PRACTICE TEST</div>
+        <h1 id="quiz-heading">Focus. Think. <em>Answer.</em></h1>
+        <p class="muted">Select the best option for each question. Answers will be evaluated upon submission with full explanations.</p>
+      </div>
+      <div class="timer-box">
+        <small>TIME REMAINING</small>
+        <strong id="timer">10:00</strong>
+      </div>
+    </section>
+
+    <div class="quiz-progress">
+      <div id="progress-fill" style="width: 0%;"></div>
+    </div>
+
+    <form id="quiz-form">
+      <div class="question-list" id="question-list-container">
+        <!-- Injected via script -->
+      </div>
+
+      <div class="quiz-submit">
+        <span id="answered-count">0 of 10 answered</span>
+        <button class="btn primary" type="submit">Submit Test & Evaluate <span>→</span></button>
+      </div>
+    </form>
+
+    <!-- RESULT MODAL -->
+    <div id="result-modal" class="modal hidden">
+      <div class="modal-card">
+        <div class="success-mark">✓</div>
+        <div class="eyebrow">TEST COMPLETED & EVALUATED</div>
+        <h2>Your Scorecard is Ready</h2>
+        <div class="result-score" id="score-text">0 / 10 · 0%</div>
+        <p id="score-message">Evaluating answers...</p>
+
+        <div class="modal-actions-col">
+          <a class="btn primary full" id="review-solution-link" href="#">
+            Review Detailed Solutions & Answers ↗
+          </a>
+          <a class="btn secondary full" href="results.html">
+            View All Results History
+          </a>
+          <a class="text-link" href="dashboard.html" style="display:block; margin-top:10px;">
+            Back to Dashboard
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryParam = urlParams.get("category");
+      const companyParam = urlParams.get("company");
+
+      let examCategory = "General";
+      let testType = "category";
+      let pool = [];
+
+      if (companyParam) {
+        testType = "company";
+        const comp = COMPANIES.find(c => c.id.toLowerCase() === companyParam.toLowerCase() || c.short_name.toLowerCase() === companyParam.toLowerCase());
+        if (comp) {
+          examCategory = comp.short_name;
+          document.getElementById("quiz-eyebrow").textContent = `${comp.short_name.toUpperCase()} / COMPANY MOCK EXAM`;
+          document.getElementById("quiz-heading").innerHTML = `${comp.short_name} Recruitment <em>Mock Test.</em>`;
+          document.title = `${comp.name} Mock Exam | PrepPilot`;
+          
+          pool = QUESTIONS.filter(q => q.company.toLowerCase().includes(comp.short_name.toLowerCase()));
+          if (pool.length < 10) {
+            const others = QUESTIONS.filter(q => !pool.includes(q));
+            pool = pool.concat(others.sort(() => 0.5 - Math.random()).slice(0, 10 - pool.length));
+          }
+        }
+      } else if (categoryParam) {
+        testType = "category";
+        examCategory = categoryParam;
+        document.getElementById("quiz-eyebrow").textContent = `${categoryParam.toUpperCase()} / PRACTICE TEST`;
+        document.getElementById("quiz-heading").innerHTML = `${categoryParam} Competency <em>Test.</em>`;
+        document.title = `${categoryParam} Practice Test | PrepPilot`;
+        pool = QUESTIONS.filter(q => q.category.toLowerCase() === categoryParam.toLowerCase());
+      }
+
+      if (pool.length === 0) pool = QUESTIONS;
+      // Pick 10 random questions
+      const selectedQuestions = pool.sort(() => 0.5 - Math.random()).slice(0, 10);
+
+      const qContainer = document.getElementById("question-list-container");
+      qContainer.innerHTML = selectedQuestions.map((q, idx) => `
+        <article class="question-card" data-qid="${q.id}">
+          <div class="question-top">
+            <span>QUESTION ${String(idx + 1).padStart(2, '0')} OF ${selectedQuestions.length}</span>
+            <div class="q-top-tags">
+              <span class="category-meta">${q.category} · ${q.topic}</span>
+              <span class="difficulty-chip ${q.difficulty.toLowerCase()}">${q.difficulty}</span>
+              ${q.company && q.company !== 'All' ? `<span class="company-tag">${q.company}</span>` : ''}
+            </div>
+          </div>
+
+          <div class="question-title-row">
+            <h3>${q.question}</h3>
+            <button type="button" class="bookmark-btn" onclick="toggleQBookmark(${q.id}, this)">
+              ${Storage.isBookmarked(q.id) ? '★ Saved' : '☆ Save'}
+            </button>
+          </div>
+
+          <div class="options">
+            ${[
+              ['A', q.option_a],
+              ['B', q.option_b],
+              ['C', q.option_c],
+              ['D', q.option_d]
+            ].map(([letter, val]) => `
+              <label class="option">
+                <input type="radio" name="q_${q.id}" value="${letter}">
+                <span class="option-letter">${letter}</span>
+                <span class="option-text">${val}</span>
+              </label>
+            `).join("")}
+          </div>
+        </article>
+      `).join("");
+
+      // Timer
+      let seconds = 600;
+      const timerElem = document.getElementById("timer");
+      const timerInt = setInterval(() => {
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        timerElem.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        if (seconds <= 60) timerElem.classList.add("urgent");
+        if (seconds <= 0) {
+          clearInterval(timerInt);
+          submitExam();
+        }
+        seconds--;
+      }, 1000);
+
+      // Progress Tracker
+      const cards = [...document.querySelectorAll(".question-card")];
+      const countElem = document.getElementById("answered-count");
+      const fillElem = document.getElementById("progress-fill");
+
+      document.getElementById("quiz-form").addEventListener("change", () => {
+        const answered = cards.filter(c => c.querySelector("input:checked")).length;
+        countElem.textContent = `${answered} of ${cards.length} answered`;
+        fillElem.style.width = `${(answered / cards.length) * 100}%`;
+      });
+
+      // Submit
+      let submitted = false;
+      function submitExam() {
+        if (submitted) return;
+        submitted = true;
+        clearInterval(timerInt);
+
+        let score = 0;
+        const details = [];
+
+        selectedQuestions.forEach(q => {
+          const checked = document.querySelector(`input[name="q_${q.id}"]:checked`);
+          const userAns = checked ? checked.value : null;
+          const isCorrect = (userAns === q.answer);
+          if (isCorrect) score++;
+
+          details.push({
+            question: q,
+            user_answer: userAns,
+            correct_answer: q.answer,
+            is_correct: isCorrect
+          });
+        });
+
+        const total = selectedQuestions.length;
+        const percentage = Math.round((score / total) * 100);
+
+        const savedResult = Storage.saveResult({
+          category: examCategory,
+          test_type: testType,
+          score: score,
+          total: total,
+          percentage: percentage,
+          details: details
+        });
+
+        document.getElementById("score-text").textContent = `${score} / ${total} · ${percentage}%`;
+        const msg = document.getElementById("score-message");
+        if (percentage >= 80) {
+          msg.textContent = "Outstanding performance! You have strong placement mastery in this section.";
+        } else if (percentage >= 50) {
+          msg.textContent = "Good attempt! Review your incorrect answers in the solution review below.";
+        } else {
+          msg.textContent = "Needs improvement. Spend time studying the step-by-step derivations.";
+        }
+
+        document.getElementById("review-solution-link").href = `quiz-review.html?id=${savedResult.id}`;
+        document.getElementById("result-modal").classList.remove("hidden");
+      }
+
+      document.getElementById("quiz-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const unanswered = cards.filter(c => !c.querySelector("input:checked")).length;
+        if (unanswered && !confirm(`${unanswered} question(s) are unanswered. Are you sure you want to submit?`)) {
+          return;
+        }
+        submitExam();
+      });
+    });
+
+    function toggleQBookmark(qid, btn) {
+      const isSaved = Storage.toggleBookmark(qid);
+      btn.textContent = isSaved ? '★ Saved' : '☆ Save';
+    }
+  </script>
+</body>
+</html>

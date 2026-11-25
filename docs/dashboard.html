@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html" style="color:var(--purple);">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice Mode</a>
+      <a href="cheatsheets.html">Cheatsheets</a>
+      <a href="results.html">My Results</a>
+      <a href="tools.html">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="practice.html">Start Practice ↗</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="welcome-row">
+      <div>
+        <div class="eyebrow">YOUR RECRUITMENT READINESS HUB</div>
+        <h1>Hey, <span id="user-greeting-name">Student</span> <span class="wave">✦</span></h1>
+        <p class="muted">Track your performance, simulate company exams, and sharpen your placement skills.</p>
+      </div>
+      <div class="date-chip" id="daily-goal-chip">
+        ● &nbsp; 2 / 2 tests completed today
+      </div>
+    </section>
+
+    <!-- TOP METRICS STATS -->
+    <section class="stats">
+      <div class="stat-card">
+        <span class="stat-icon">▣</span>
+        <small>TESTS COMPLETED</small>
+        <strong id="stat-total-tests">2</strong>
+        <span class="stat-foot">Total practice sessions</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">◉</span>
+        <small>AVERAGE SCORE</small>
+        <strong id="stat-avg-score">85<small>%</small></strong>
+        <span class="stat-foot">Across all evaluated attempts</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">✦</span>
+        <small>QUESTION BANK</small>
+        <strong id="stat-qbank-size">85+</strong>
+        <span class="stat-foot">Aptitude, Reasoning, Verbal, Tech</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">★</span>
+        <small>REVISION VAULT</small>
+        <strong id="stat-bookmarks-count">3</strong>
+        <span class="stat-foot">Bookmarked questions</span>
+      </div>
+    </section>
+
+    <!-- RECOMMENDATION ALERT -->
+    <div class="recommend-box">
+      <div class="recommend-icon">⚡</div>
+      <div class="recommend-content">
+        <strong>Focus Recommendation: Boost your Verbal Reasoning Score</strong>
+        <p>Your performance in Reasoning & Syllogisms has room for growth. Spend 15 minutes practicing questions in this section.</p>
+      </div>
+      <a href="quiz.html?category=Reasoning" class="btn primary btn-sm">Start Reasoning Test →</a>
+    </div>
+
+    <!-- TARGET RECRUITERS & MOCK EXAMS -->
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">TARGET RECRUITERS</div>
+        <h2>Company Mock Exams & Pattern Guides</h2>
+      </div>
+      <a class="text-link" href="companies.html">View all 10 companies →</a>
+    </div>
+
+    <section class="company-mini-grid" id="company-mini-container">
+      <!-- Injected via script -->
+    </section>
+
+    <!-- PRACTICE BY CATEGORY -->
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">CORE COMPETENCIES</div>
+        <h2>Practice by Category</h2>
+      </div>
+      <div class="section-actions-right">
+        <a class="text-link" href="practice.html">Self-Paced Practice Mode →</a>
+        <a class="text-link" href="cheatsheets.html">Formulas & Cheatsheets →</a>
+      </div>
+    </div>
+
+    <section class="category-grid">
+      <article class="category-card">
+        <div class="category-icon icon-1">∑</div>
+        <div class="category-meta">01 / PRACTICE</div>
+        <h3>Aptitude</h3>
+        <p>Speed & Distance, Time & Work, Profit & Loss, Percentages, Probability.</p>
+        <div class="card-action-row">
+          <a href="quiz.html?category=Aptitude" class="card-link">Timed Test <span>↗</span></a>
+          <a href="practice.html?category=aptitude" class="card-link sub-link">Practice <span>→</span></a>
+        </div>
+      </article>
+
+      <article class="category-card">
+        <div class="category-icon icon-2">⌘</div>
+        <div class="category-meta">02 / PRACTICE</div>
+        <h3>Reasoning</h3>
+        <p>Syllogisms, Blood Relations, Coding-Decoding, Seating & Direction Sense.</p>
+        <div class="card-action-row">
+          <a href="quiz.html?category=Reasoning" class="card-link">Timed Test <span>↗</span></a>
+          <a href="practice.html?category=reasoning" class="card-link sub-link">Practice <span>→</span></a>
+        </div>
+      </article>
+
+      <article class="category-card">
+        <div class="category-icon icon-3">Aa</div>
+        <div class="category-meta">03 / PRACTICE</div>
+        <h3>Verbal</h3>
+        <p>Reading Comprehension, Spotting Errors, Para Jumbles, Synonyms & Antonyms.</p>
+        <div class="card-action-row">
+          <a href="quiz.html?category=Verbal" class="card-link">Timed Test <span>↗</span></a>
+          <a href="practice.html?category=verbal" class="card-link sub-link">Practice <span>→</span></a>
+        </div>
+      </article>
+
+      <article class="category-card">
+        <div class="category-icon icon-4">&lt;/&gt;</div>
+        <div class="category-meta">04 / PRACTICE</div>
+        <h3>Programming</h3>
+        <p>Data Structures, Algorithms, Python, Java, C/C++, SQL & DBMS, OOP concepts.</p>
+        <div class="card-action-row">
+          <a href="quiz.html?category=Programming" class="card-link">Timed Test <span>↗</span></a>
+          <a href="practice.html?category=programming" class="card-link sub-link">Practice <span>→</span></a>
+        </div>
+      </article>
+    </section>
+
+    <!-- SKILL ACCURACY BREAKDOWN -->
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">SKILL ACCURACY BREAKDOWN</div>
+        <h2>Category Performance</h2>
+      </div>
+      <a class="text-link" href="tools.html">Open Study Planner →</a>
+    </div>
+
+    <section class="performance-grid">
+      <article class="performance-card">
+        <div class="performance-top"><strong>Aptitude</strong><span>82%</span></div>
+        <div class="performance-track"><i style="width: 82%"></i></div>
+        <small>3 attempt(s) recorded</small>
+      </article>
+      <article class="performance-card">
+        <div class="performance-top"><strong>Reasoning</strong><span>75%</span></div>
+        <div class="performance-track"><i style="width: 75%"></i></div>
+        <small>2 attempt(s) recorded</small>
+      </article>
+      <article class="performance-card">
+        <div class="performance-top"><strong>Verbal</strong><span>88%</span></div>
+        <div class="performance-track"><i style="width: 88%"></i></div>
+        <small>2 attempt(s) recorded</small>
+      </article>
+      <article class="performance-card">
+        <div class="performance-top"><strong>Programming</strong><span>91%</span></div>
+        <div class="performance-track"><i style="width: 91%"></i></div>
+        <small>4 attempt(s) recorded</small>
+      </article>
+    </section>
+
+    <!-- RECENT ACTIVITY WITH SOLUTIONS REVIEW -->
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">RECENT ACTIVITY</div>
+        <h2>Your Latest Attempts & Solution Reviews</h2>
+      </div>
+      <a class="text-link" href="results.html">View complete history →</a>
+    </div>
+
+    <div class="table-card">
+      <table id="recent-attempts-table">
+        <thead>
+          <tr>
+            <th>CATEGORY / COMPANY</th>
+            <th>TYPE</th>
+            <th>SCORE</th>
+            <th>DATE</th>
+            <th>STATUS</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="recent-attempts-body">
+          <!-- Injected via script -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = Storage.getUser();
+      document.getElementById("user-greeting-name").textContent = user.name.split(" ")[0];
+
+      // Top companies
+      const compContainer = document.getElementById("company-mini-container");
+      if (compContainer && typeof COMPANIES !== "undefined") {
+        compContainer.innerHTML = COMPANIES.slice(0, 4).map(c => `
+          <div class="company-mini-card">
+            <div class="company-mini-header">
+              <span class="company-mini-badge" style="background: ${c.color};">${c.short_name}</span>
+              <span class="badge-sub">${c.ctc_range}</span>
+            </div>
+            <h4>${c.name}</h4>
+            <p class="company-mini-sub">${c.tagline}</p>
+            <div class="company-mini-actions">
+              <a href="company.html?id=${c.id}" class="btn-text">Pattern & Syllabus</a>
+              <a href="quiz.html?company=${c.id}" class="btn primary btn-xs">Take Mock Test ↗</a>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Stats & Results
+      const results = Storage.getResults();
+      document.getElementById("stat-total-tests").textContent = results.length;
+      if (results.length > 0) {
+        const avg = Math.round(results.reduce((acc, r) => acc + (r.score / r.total) * 100, 0) / results.length);
+        document.getElementById("stat-avg-score").innerHTML = `${avg}<small>%</small>`;
+      }
+      document.getElementById("stat-bookmarks-count").textContent = Storage.getBookmarks().length;
+      document.getElementById("stat-qbank-size").textContent = `${QUESTIONS.length}+`;
+
+      const tbody = document.getElementById("recent-attempts-body");
+      if (tbody && results.length > 0) {
+        tbody.innerHTML = results.slice(0, 5).map(r => `
+          <tr>
+            <td><strong>${r.category}</strong></td>
+            <td><span class="type-pill">${r.test_type ? r.test_type.toUpperCase() : 'CATEGORY'}</span></td>
+            <td>${r.score} / ${r.total} (${Math.round(r.score / r.total * 100)}%)</td>
+            <td>${r.date}</td>
+            <td>
+              <span class="status ${r.score / r.total >= 0.8 ? 'good' : 'improve'}">
+                ${r.score / r.total >= 0.8 ? 'High Accuracy' : 'Good Effort'}
+              </span>
+            </td>
+            <td>
+              <a href="quiz-review.html?id=${r.id}" class="review-btn">Review Solutions ↗</a>
+            </td>
+          </tr>
+        `).join("");
+      }
+    });
+  </script>
+</body>
+</html>
