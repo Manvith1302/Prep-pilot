@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Results & History | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice Mode</a>
+      <a href="cheatsheets.html">Cheatsheets</a>
+      <a href="results.html" style="color:var(--purple);">My Results</a>
+      <a href="tools.html">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="dashboard.html">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-heading">
+      <div class="eyebrow">YOUR PERFORMANCE HISTORY</div>
+      <h1>Results & <em>Solutions.</em></h1>
+      <p class="muted">Review past evaluations, track accuracy trends, and study detailed answer explanations.</p>
+    </div>
+
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>CATEGORY / RECRUITER</th>
+            <th>TYPE</th>
+            <th>SCORE</th>
+            <th>PERCENTAGE</th>
+            <th>DATE & TIME</th>
+            <th>STATUS</th>
+            <th>SOLUTIONS</th>
+          </tr>
+        </thead>
+        <tbody id="results-history-body">
+          <!-- Injected via script -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="results-actions-row" style="margin-top: 25px;">
+      <a class="btn secondary back-btn" href="dashboard.html">← Back to Dashboard</a>
+      <a class="btn primary back-btn" href="practice.html">Practice Mode <span>→</span></a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const results = Storage.getResults();
+      const tbody = document.getElementById("results-history-body");
+
+      if (results.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty">No tests completed yet. Start your first practice exam!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = results.map(r => {
+        const pct = Math.round((r.score / r.total) * 100);
+        const isGood = pct >= 80;
+        return `
+          <tr>
+            <td><strong>${r.category}</strong></td>
+            <td><span class="type-pill">${(r.test_type || 'Category').toUpperCase()}</span></td>
+            <td>${r.score} / ${r.total}</td>
+            <td>
+              <div class="score-bar">
+                <i style="width: ${pct}%"></i>
+              </div>
+              ${pct}%
+            </td>
+            <td>${r.date}</td>
+            <td>
+              <span class="status ${isGood ? 'good' : 'improve'}">
+                ${isGood ? 'High Accuracy' : (pct >= 50 ? 'Good Effort' : 'Needs Practice')}
+              </span>
+            </td>
+            <td>
+              <a href="quiz-review.html?id=${r.id}" class="review-btn">
+                Review Solutions ↗
+              </a>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    });
+  </script>
+</body>
+</html>

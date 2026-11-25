@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Self-Paced Practice Mode | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html" style="color:var(--purple);">Practice Mode</a>
+      <a href="cheatsheets.html">Cheatsheets</a>
+      <a href="results.html">My Results</a>
+      <a href="tools.html">Study Tools</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <span class="nav-user">Student</span>
+      <a class="nav-cta" href="dashboard.html">Dashboard</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-heading">
+      <div class="eyebrow">UNTIMED LEARNING & DEEP PRACTICE</div>
+      <h1>Self-Paced Practice <em>Mode.</em></h1>
+      <p class="muted">Learn at your own rhythm with instant feedback, interactive answer checking, and detailed explanations.</p>
+    </div>
+
+    <!-- CATEGORY FILTER PILLS -->
+    <div class="practice-cat-tabs" id="cat-tabs-container">
+      <button class="cat-pill active" onclick="setCategoryFilter('all', this)">All Questions</button>
+      <button class="cat-pill" onclick="setCategoryFilter('Aptitude', this)">Aptitude</button>
+      <button class="cat-pill" onclick="setCategoryFilter('Reasoning', this)">Reasoning</button>
+      <button class="cat-pill" onclick="setCategoryFilter('Verbal', this)">Verbal</button>
+      <button class="cat-pill" onclick="setCategoryFilter('Programming', this)">Programming</button>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="practice-filter-bar">
+      <div class="filter-item">
+        <label>Company Tag</label>
+        <select id="filter-company" onchange="applyFilters()">
+          <option value="All">All Recruiters</option>
+          <option value="TCS">TCS</option>
+          <option value="Infosys">Infosys</option>
+          <option value="Accenture">Accenture</option>
+          <option value="Wipro">Wipro</option>
+          <option value="Cognizant">Cognizant</option>
+          <option value="Amazon">Amazon</option>
+          <option value="Capgemini">Capgemini</option>
+          <option value="Deloitte">Deloitte</option>
+          <option value="Zoho">Zoho</option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <label>Difficulty</label>
+        <select id="filter-diff" onchange="applyFilters()">
+          <option value="All">All Levels</option>
+          <option value="Easy">Easy</option>
+          <option value="Medium">Medium</option>
+          <option value="Hard">Hard</option>
+        </select>
+      </div>
+
+      <div class="filter-item filter-wide">
+        <label>Specific Topic</label>
+        <select id="filter-topic" onchange="applyFilters()">
+          <option value="All">All Topics</option>
+        </select>
+      </div>
+
+      <div class="filter-item filter-btn">
+        <label>&nbsp;</label>
+        <button type="button" class="btn secondary btn-sm" onclick="resetFilters()">Clear Filters</button>
+      </div>
+    </div>
+
+    <!-- QUESTIONS LIST -->
+    <div class="practice-cards-list" id="practice-cards-container">
+      <!-- Injected via script -->
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div><strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform</div>
+      <div>© 2026 PrepPilot · Built for placement excellence and interview readiness.</div>
+    </div>
+  </footer>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+  <script>
+    let activeCategory = "all";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check query params
+      const urlParams = new URLSearchParams(window.location.search);
+      const cat = urlParams.get("category");
+      const comp = urlParams.get("company");
+
+      if (cat) activeCategory = cat;
+      if (comp) document.getElementById("filter-company").value = comp;
+
+      // Populate topics dropdown
+      const topicSelect = document.getElementById("filter-topic");
+      const uniqueTopics = [...new Set(QUESTIONS.map(q => q.topic))].sort();
+      uniqueTopics.forEach(t => {
+        const opt = document.createElement("option");
+        opt.value = t;
+        opt.textContent = t;
+        topicSelect.appendChild(opt);
+      });
+
+      // Update active cat pill
+      if (cat) {
+        document.querySelectorAll(".cat-pill").forEach(p => {
+          if (p.textContent.toLowerCase() === cat.toLowerCase()) {
+            document.querySelectorAll(".cat-pill").forEach(x => x.classList.remove("active"));
+            p.classList.add("active");
+          }
+        });
+      }
+
+      applyFilters();
+    });
+
+    function setCategoryFilter(cat, btn) {
+      activeCategory = cat;
+      document.querySelectorAll(".cat-pill").forEach(x => x.classList.remove("active"));
+      btn.classList.add("active");
+      applyFilters();
+    }
+
+    function resetFilters() {
+      activeCategory = "all";
+      document.querySelectorAll(".cat-pill").forEach(x => x.classList.remove("active"));
+      document.querySelector(".cat-pill").classList.add("active");
+      document.getElementById("filter-company").value = "All";
+      document.getElementById("filter-diff").value = "All";
+      document.getElementById("filter-topic").value = "All";
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const compVal = document.getElementById("filter-company").value;
+      const diffVal = document.getElementById("filter-diff").value;
+      const topicVal = document.getElementById("filter-topic").value;
+
+      let filtered = QUESTIONS.filter(q => {
+        if (activeCategory !== "all" && q.category.toLowerCase() !== activeCategory.toLowerCase()) return false;
+        if (compVal !== "All" && !q.company.toLowerCase().includes(compVal.toLowerCase()) && q.company !== "All") return false;
+        if (diffVal !== "All" && q.difficulty.toLowerCase() !== diffVal.toLowerCase()) return false;
+        if (topicVal !== "All" && q.topic !== topicVal) return false;
+        return true;
+      });
+
+      renderPracticeCards(filtered);
+    }
+
+    function renderPracticeCards(list) {
+      const container = document.getElementById("practice-cards-container");
+      if (list.length === 0) {
+        container.innerHTML = `<div class="empty"><p>No practice questions found matching your filter criteria.</p><button class="btn primary btn-sm" onclick="resetFilters()">Reset Filters</button></div>`;
+        return;
+      }
+
+      container.innerHTML = list.map((q, idx) => `
+        <article class="practice-card" id="pq-${q.id}" data-answer="${q.answer}">
+          <div class="practice-card-top">
+            <div class="q-meta-tags">
+              <span class="q-num-tag">Question ${String(idx + 1).padStart(2, '0')}</span>
+              <span class="category-meta">${q.category} · ${q.topic}</span>
+              <span class="difficulty-chip ${q.difficulty.toLowerCase()}">${q.difficulty}</span>
+              ${q.company && q.company !== 'All' ? `<span class="company-tag">${q.company}</span>` : ''}
+            </div>
+
+            <button class="bookmark-btn" onclick="togglePracticeBm(${q.id}, this)">
+              ${Storage.isBookmarked(q.id) ? '★ Saved' : '☆ Save'}
+            </button>
+          </div>
+
+          <h3 class="practice-question-text">${q.question}</h3>
+
+          <div class="practice-options" id="popt-${q.id}">
+            ${[
+              ['A', q.option_a],
+              ['B', q.option_b],
+              ['C', q.option_c],
+              ['D', q.option_d]
+            ].map(([letter, val]) => `
+              <button type="button" class="practice-opt-btn" data-letter="${letter}" onclick="selectPracticeOption(${q.id}, '${letter}', this)">
+                <span class="opt-letter">${letter}</span>
+                <span class="opt-text">${val}</span>
+              </button>
+            `).join("")}
+          </div>
+
+          <div class="practice-actions-row">
+            <button type="button" class="btn secondary btn-sm check-btn-${q.id}" onclick="checkPracticeAnswer(${q.id})">
+              Check Answer <span>✓</span>
+            </button>
+            <button type="button" class="btn-text" onclick="togglePracticeExp(${q.id})">
+              Show Explanation <span>▼</span>
+            </button>
+          </div>
+
+          <div class="practice-explanation hidden" id="pexp-${q.id}">
+            <div class="explanation-title">
+              <span class="exp-icon">💡</span> Correct Answer: <strong>Option ${q.answer}</strong>
+            </div>
+            <p class="explanation-body">${q.explanation}</p>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function selectPracticeOption(qid, letter, btn) {
+      const container = document.getElementById(`popt-${qid}`);
+      container.querySelectorAll(".practice-opt-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+    }
+
+    function checkPracticeAnswer(qid) {
+      const card = document.getElementById(`pq-${qid}`);
+      const correctAns = card.dataset.answer.trim().toUpperCase();
+      const container = document.getElementById(`popt-${qid}`);
+      const selected = container.querySelector(".practice-opt-btn.selected");
+
+      if (!selected) {
+        alert("Please click an option before checking the answer.");
+        return;
+      }
+
+      const userChoice = selected.dataset.letter.trim().toUpperCase();
+      container.querySelectorAll(".practice-opt-btn").forEach(btn => {
+        const letter = btn.dataset.letter.trim().toUpperCase();
+        btn.classList.remove("opt-correct", "opt-wrong");
+        if (letter === correctAns) {
+          btn.classList.add("opt-correct");
+        } else if (letter === userChoice && userChoice !== correctAns) {
+          btn.classList.add("opt-wrong");
+        }
+      });
+
+      document.getElementById(`pexp-${qid}`).classList.remove("hidden");
+    }
+
+    function togglePracticeExp(qid) {
+      const elem = document.getElementById(`pexp-${qid}`);
+      elem.classList.toggle("hidden");
+    }
+
+    function togglePracticeBm(qid, btn) {
+      const isSaved = Storage.toggleBookmark(qid);
+      btn.textContent = isSaved ? '★ Saved' : '☆ Save';
+    }
+  </script>
+</body>
+</html>

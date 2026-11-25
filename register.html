@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Account | PrepPilot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="companies.html">Company Prep</a>
+      <a href="practice.html">Practice</a>
+      <a class="nav-cta" href="login.html">Sign In</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="auth-wrap">
+      <div class="auth-aside">
+        <div class="eyebrow">START YOUR JOURNEY</div>
+        <h1>Turn preparation into <em>progress.</em></h1>
+        <p>Create your free account and get a personal space to practice, measure, and improve.</p>
+        <div class="quote">A better score begins with a better habit.</div>
+      </div>
+
+      <form class="auth-card" onsubmit="event.preventDefault(); doRegister();">
+        <div class="eyebrow">GET STARTED</div>
+        <h2>Create account</h2>
+        <p class="muted">It takes less than a minute.</p>
+        <label>Full name</label>
+        <input id="reg-name" placeholder="Your name" required>
+        <label>Email address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" required>
+        <label>Password</label>
+        <input type="password" id="reg-pass" minlength="6" placeholder="At least 6 characters" required>
+        <button class="btn primary full" type="submit">Create account <span>→</span></button>
+        <p class="auth-bottom">Already registered? <a href="login.html">Sign in</a></p>
+      </form>
+    </section>
+  </main>
+
+  <script src="assets/app.js"></script>
+  <script>
+    function doRegister() {
+      const name = document.getElementById("reg-name").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      Storage.setUser(name, email);
+      window.location.href = "dashboard.html";
+    }
+  </script>
+</body>
+</html>
