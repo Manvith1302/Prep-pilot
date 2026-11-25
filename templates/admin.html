@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Admin Question Bank | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">ADMINISTRATOR CONTROL CENTRE</div>
+  <h1>Question Bank <em>Management.</em></h1>
+  <p class="muted">Manage the recruitment question bank, add company-specific questions, and monitor system usage.</p>
+</div>
+
+<!-- STATS OVERVIEW -->
+<section class="stats">
+  <div class="stat-card">
+    <small>REGISTERED USERS</small>
+    <strong>{{ users }}</strong>
+    <span class="stat-foot">Student accounts</span>
+  </div>
+  <div class="stat-card">
+    <small>TEST ATTEMPTS</small>
+    <strong>{{ results }}</strong>
+    <span class="stat-foot">Evaluated tests</span>
+  </div>
+  <div class="stat-card">
+    <small>QUESTION BANK</small>
+    <strong>{{ questions|length }}</strong>
+    <span class="stat-foot">Total questions filtered</span>
+  </div>
+</section>
+
+<!-- CATEGORY PILLS BAR -->
+<div class="admin-cat-pills">
+  {% for cat, count in category_counts.items() %}
+    <span class="cat-count-pill">
+      <strong>{{ cat }}:</strong> {{ count }} Qs
+    </span>
+  {% endfor %}
+</div>
+
+<div class="admin-grid">
+  <!-- ADD QUESTION FORM -->
+  <form class="auth-card admin-form" method="post" action="{{ url_for('add_question') }}">
+    <div class="eyebrow">CONTENT AUTHORING</div>
+    <h2>Add New Question</h2>
+
+    <div class="two-col">
+      <div>
+        <label>Category</label>
+        <select name="category" required>
+          <option>Aptitude</option>
+          <option>Reasoning</option>
+          <option>Verbal</option>
+          <option>Programming</option>
+        </select>
+      </div>
+      <div>
+        <label>Difficulty</label>
+        <select name="difficulty" required>
+          <option>Easy</option>
+          <option selected>Medium</option>
+          <option>Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <label>Topic Name</label>
+        <input name="topic" placeholder="e.g. Speed & Distance, Syllogisms" required>
+      </div>
+      <div>
+        <label>Company Tag</label>
+        <select name="company">
+          <option value="All">All Recruiters</option>
+          <option value="TCS">TCS</option>
+          <option value="Infosys">Infosys</option>
+          <option value="Accenture">Accenture</option>
+          <option value="Wipro">Wipro</option>
+          <option value="Cognizant">Cognizant</option>
+          <option value="Amazon">Amazon</option>
+          <option value="Capgemini">Capgemini</option>
+          <option value="Deloitte">Deloitte</option>
+          <option value="Zoho">Zoho</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Question Statement</label>
+    <textarea name="question" placeholder="Enter the complete question text..." required></textarea>
+
+    <div class="two-col">
+      <div>
+        <label>Option A</label>
+        <input name="a" required>
+      </div>
+      <div>
+        <label>Option B</label>
+        <input name="b" required>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <label>Option C</label>
+        <input name="c" required>
+      </div>
+      <div>
+        <label>Option D</label>
+        <input name="d" required>
+      </div>
+    </div>
+
+    <label>Correct Option</label>
+    <select name="answer" required>
+      <option value="A">Option A</option>
+      <option value="B">Option B</option>
+      <option value="C">Option C</option>
+      <option value="D">Option D</option>
+    </select>
+
+    <label>Step-by-Step Derivation / Explanation</label>
+    <textarea name="explanation" placeholder="Provide mathematical derivation or logical explanation..." required></textarea>
+
+    <button class="btn primary full" type="submit">Add to Question Bank +</button>
+  </form>
+
+  <!-- EXISTING QUESTIONS TABLE & FILTER -->
+  <div class="admin-questions-panel">
+    <div class="admin-filter-bar">
+      <form method="get" class="admin-search-form">
+        <input type="text" name="q" value="{{ search_query }}" placeholder="Search questions...">
+        <select name="category" onchange="this.form.submit()">
+          <option value="All" {% if cat_filter == 'All' %}selected{% endif %}>All Categories</option>
+          <option value="Aptitude" {% if cat_filter == 'Aptitude' %}selected{% endif %}>Aptitude</option>
+          <option value="Reasoning" {% if cat_filter == 'Reasoning' %}selected{% endif %}>Reasoning</option>
+          <option value="Verbal" {% if cat_filter == 'Verbal' %}selected{% endif %}>Verbal</option>
+          <option value="Programming" {% if cat_filter == 'Programming' %}selected{% endif %}>Programming</option>
+        </select>
+        <select name="company" onchange="this.form.submit()">
+          <option value="All" {% if comp_filter == 'All' %}selected{% endif %}>All Companies</option>
+          <option value="TCS" {% if comp_filter == 'TCS' %}selected{% endif %}>TCS</option>
+          <option value="Infosys" {% if comp_filter == 'Infosys' %}selected{% endif %}>Infosys</option>
+          <option value="Accenture" {% if comp_filter == 'Accenture' %}selected{% endif %}>Accenture</option>
+          <option value="Amazon" {% if comp_filter == 'Amazon' %}selected{% endif %}>Amazon</option>
+          <option value="Wipro" {% if comp_filter == 'Wipro' %}selected{% endif %}>Wipro</option>
+          <option value="Cognizant" {% if comp_filter == 'Cognizant' %}selected{% endif %}>Cognizant</option>
+        </select>
+        <button type="submit" class="btn secondary btn-xs">Filter</button>
+        {% if search_query or cat_filter != 'All' or comp_filter != 'All' %}
+          <a href="{{ url_for('admin') }}" class="btn-text" style="font-size:11px;">Reset</a>
+        {% endif %}
+      </form>
+    </div>
+
+    <div class="table-card" style="max-height: 750px; overflow-y: auto;">
+      {% if questions %}
+        {% for q in questions %}
+        <div class="admin-question">
+          <div class="admin-q-content">
+            <div class="q-meta-tags">
+              <span class="category-meta">{{ q.category }} · {{ q.topic }}</span>
+              <span class="difficulty-chip {{ q.difficulty.lower() }}">{{ q.difficulty }}</span>
+              {% if q.company and q.company != 'All' %}
+                <span class="company-tag">{{ q.company }}</span>
+              {% endif %}
+            </div>
+            <p><strong>{{ q.question }}</strong></p>
+            <small class="admin-ans-line">Answer: Option {{ q.answer }} · {{ q.explanation[:80] }}...</small>
+          </div>
+          <form method="post" action="{{ url_for('delete_question', qid=q.id) }}" onsubmit="return confirm('Delete this question permanently?')">
+            <button class="delete-btn" aria-label="Delete question" title="Delete question">×</button>
+          </form>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty">No questions found matching query.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Company Recruitment Hub | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">TARGET RECRUITERS & EXAM PATTERNS</div>
+  <h1>Company Recruitment <em>Hub.</em></h1>
+  <p class="lead">
+    Discover which companies ask which types of questions, explore exact round formats, 
+    sectional weightages, eligibility cutoffs, and practice with company-specific mock exams.
+  </p>
+</div>
+
+<!-- COMPANIES DIRECTORY GRID -->
+<div class="company-directory-grid">
+  {% for comp in companies %}
+  <article class="company-full-card">
+    <div class="company-card-top">
+      <div class="company-badge-group">
+        <div class="company-monogram-lg" style="background: {{ comp.color }};">
+          {{ comp.short_name[:4] }}
+        </div>
+        <div>
+          <h3>{{ comp.name }}</h3>
+          <span class="badge-pill">{{ comp.badge }}</span>
+        </div>
+      </div>
+      <div class="company-ctc-pill">
+        {{ comp.ctc_range }}
+      </div>
+    </div>
+
+    <p class="company-desc">{{ comp.tagline }}</p>
+
+    <div class="company-highlights">
+      <div class="highlight-item">
+        <small>ELIGIBILITY</small>
+        <strong>{{ comp.eligibility.split(',')[0] }}</strong>
+      </div>
+      <div class="highlight-item">
+        <small>SELECTION PROCESS</small>
+        <strong>{{ comp.rounds|length }} Evaluation Rounds</strong>
+      </div>
+      <div class="highlight-item">
+        <small>PRIMARY FOCUS</small>
+        <strong>{{ comp.question_types[0].category.split('(')[0] }}</strong>
+      </div>
+    </div>
+
+    <div class="question-types-preview">
+      <small>QUESTION TYPES EVALUATED:</small>
+      <div class="type-tags">
+        {% for qt in comp.question_types %}
+          <span class="type-tag">{{ qt.category.split('(')[0].strip() }} ({{ qt.weightage }})</span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="company-card-bottom">
+      <a href="{{ url_for('company_detail', cid=comp.id) }}" class="btn secondary btn-sm">
+        Exam Pattern & Syllabus ↗
+      </a>
+      <a href="{{ url_for('company_quiz', cid=comp.id) }}" class="btn primary btn-sm">
+        Start {{ comp.short_name }} Mock Test
+      </a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<a class="btn secondary back-btn" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+{% endblock %}

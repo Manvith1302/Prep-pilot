@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}Self-Paced Practice Mode | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">UNTIMED LEARNING & DEEP PRACTICE</div>
+  <h1>Self-Paced Practice <em>Mode.</em></h1>
+  <p class="muted">Learn at your own rhythm with instant feedback, interactive answer checking, and detailed explanations.</p>
+</div>
+
+<!-- CATEGORY FILTER TABS -->
+<div class="practice-cat-tabs">
+  <a href="{{ url_for('practice_mode', category='all') }}" class="cat-pill {{ 'active' if active_cat == 'All' else '' }}">All Questions</a>
+  {% for c in categories %}
+    <a href="{{ url_for('practice_mode', category=c|lower) }}" class="cat-pill {{ 'active' if active_cat == c else '' }}">{{ c }}</a>
+  {% endfor %}
+</div>
+
+<!-- REFINED FILTER BAR -->
+<form method="get" class="practice-filter-bar">
+  <div class="filter-item">
+    <label>Company Tag</label>
+    <select name="company" onchange="this.form.submit()">
+      <option value="All" {% if not selected_company or selected_company == 'All' %}selected{% endif %}>All Recruiters</option>
+      <option value="TCS" {% if selected_company == 'TCS' %}selected{% endif %}>TCS</option>
+      <option value="Infosys" {% if selected_company == 'Infosys' %}selected{% endif %}>Infosys</option>
+      <option value="Accenture" {% if selected_company == 'Accenture' %}selected{% endif %}>Accenture</option>
+      <option value="Wipro" {% if selected_company == 'Wipro' %}selected{% endif %}>Wipro</option>
+      <option value="Cognizant" {% if selected_company == 'Cognizant' %}selected{% endif %}>Cognizant</option>
+      <option value="Amazon" {% if selected_company == 'Amazon' %}selected{% endif %}>Amazon</option>
+      <option value="Capgemini" {% if selected_company == 'Capgemini' %}selected{% endif %}>Capgemini</option>
+      <option value="Deloitte" {% if selected_company == 'Deloitte' %}selected{% endif %}>Deloitte</option>
+      <option value="Zoho" {% if selected_company == 'Zoho' %}selected{% endif %}>Zoho</option>
+    </select>
+  </div>
+
+  <div class="filter-item">
+    <label>Difficulty</label>
+    <select name="difficulty" onchange="this.form.submit()">
+      <option value="All" {% if not selected_diff or selected_diff == 'All' %}selected{% endif %}>All Levels</option>
+      <option value="Easy" {% if selected_diff == 'Easy' %}selected{% endif %}>Easy</option>
+      <option value="Medium" {% if selected_diff == 'Medium' %}selected{% endif %}>Medium</option>
+      <option value="Hard" {% if selected_diff == 'Hard' %}selected{% endif %}>Hard</option>
+    </select>
+  </div>
+
+  <div class="filter-item filter-wide">
+    <label>Specific Topic</label>
+    <select name="topic" onchange="this.form.submit()">
+      <option value="">All Topics</option>
+      {% for t in topics %}
+        <option value="{{ t }}" {% if selected_topic == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  {% if selected_company or selected_diff or selected_topic %}
+    <div class="filter-item filter-btn">
+      <label>&nbsp;</label>
+      <a href="{{ url_for('practice_mode', category=active_cat|lower) }}" class="btn secondary btn-sm">Clear Filters</a>
+    </div>
+  {% endif %}
+</form>
+
+<!-- QUESTIONS PRACTICE CARDS -->
+<div class="practice-cards-list">
+  {% if questions %}
+    {% for q in questions %}
+    <article class="practice-card" data-answer="{{ q.answer }}" id="q-{{ q.id }}">
+      <div class="practice-card-top">
+        <div class="q-meta-tags">
+          <span class="q-num-tag">Question {{ "%02d"|format(loop.index) }}</span>
+          <span class="category-meta">{{ q.category }} · {{ q.topic }}</span>
+          <span class="difficulty-chip {{ q.difficulty.lower() }}">{{ q.difficulty }}</span>
+          {% if q.company and q.company != 'All' %}
+            <span class="company-tag">{{ q.company }}</span>
+          {% endif %}
+        </div>
+
+        <form method="post" action="{{ url_for('toggle_bookmark', question_id=q.id) }}" style="display:inline; margin:0;">
+          <button class="bookmark-btn" type="submit" title="Save question">
+            {{ '★ Saved' if q.id in saved_ids else '☆ Save' }}
+          </button>
+        </form>
+      </div>
+
+      <h3 class="practice-question-text">{{ q.question }}</h3>
+
+      <div class="practice-options" data-qid="{{ q.id }}">
+        {% for letter, option in [('A', q.option_a), ('B', q.option_b), ('C', q.option_c), ('D', q.option_d)] %}
+        <button type="button" class="practice-opt-btn" data-letter="{{ letter }}">
+          <span class="opt-letter">{{ letter }}</span>
+          <span class="opt-text">{{ option }}</span>
+        </button>
+        {% endfor %}
+      </div>
+
+      <div class="practice-actions-row">
+        <button type="button" class="btn secondary btn-sm check-answer-btn" onclick="checkPracticeAnswer({{ q.id }})">
+          Check Answer <span>✓</span>
+        </button>
+        <button type="button" class="btn-text toggle-exp-btn" onclick="toggleExplanation({{ q.id }})">
+          Show Explanation <span>▼</span>
+        </button>
+      </div>
+
+      <!-- EXPLANATION ACCORDION -->
+      <div class="practice-explanation hidden" id="exp-{{ q.id }}">
+        <div class="explanation-title">
+          <span class="exp-icon">💡</span> Correct Answer: <strong>Option {{ q.answer }}</strong>
+        </div>
+        <p class="explanation-body">{{ q.explanation }}</p>
+      </div>
+    </article>
+    {% endfor %}
+  {% else %}
+    <div class="empty">
+      <p>No practice questions found matching your filter criteria.</p>
+      <a href="{{ url_for('practice_mode') }}" class="btn primary btn-sm" style="margin-top:12px;">Reset Filters</a>
+    </div>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/practice.js') }}"></script>
+{% endblock %}

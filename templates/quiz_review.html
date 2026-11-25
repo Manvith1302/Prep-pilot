@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Solution Review | {{ result.category }} | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">POST-TEST ANALYSIS & SOLUTIONS</div>
+  <h1>Test Solution <em>Review.</em></h1>
+  <p class="muted">Review every question, examine your selections, and learn from detailed step-by-step derivations.</p>
+</div>
+
+<!-- PERFORMANCE SCORECARD -->
+<section class="review-scorecard">
+  <div class="scorecard-left">
+    <div class="scorecard-cat">
+      <span class="type-pill">{{ result.test_type|title }} Exam</span>
+      <h2>{{ result.category }}</h2>
+      <span class="date-taken">Attempted on {{ result.taken_at.strftime('%d %B %Y at %I:%M %p') }}</span>
+    </div>
+  </div>
+
+  <div class="scorecard-metrics">
+    <div class="metric-item">
+      <small>SCORE</small>
+      <strong>{{ result.score }} / {{ result.total }}</strong>
+    </div>
+    <div class="metric-item">
+      <small>ACCURACY</small>
+      <strong>{{ (result.score / result.total * 100)|round|int }}%</strong>
+    </div>
+    <div class="metric-item">
+      <small>PERFORMANCE</small>
+      <span class="status-badge {{ 'badge-green' if (result.score / result.total >= 0.8) else ('badge-yellow' if result.score / result.total >= 0.5 else 'badge-red') }}">
+        {{ 'Excellent' if result.score / result.total >= 0.8 else ('Average' if result.score / result.total >= 0.5 else 'Needs Practice') }}
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- QUESTIONS REVIEW LIST -->
+<div class="section-heading">
+  <div>
+    <div class="eyebrow">QUESTION BY QUESTION BREAKDOWN</div>
+    <h2>Detailed Explanations & Answers ({{ items|length }} Questions)</h2>
+  </div>
+</div>
+
+<div class="review-list">
+  {% for item in items %}
+  {% set q = item.question %}
+  <article class="review-card {{ 'card-correct' if item.is_correct else 'card-incorrect' }}">
+    <div class="review-card-top">
+      <div class="q-meta-tags">
+        <span class="q-num-tag">Question {{ "%02d"|format(loop.index) }}</span>
+        <span class="category-meta">{{ q.category }} · {{ q.topic }}</span>
+        <span class="difficulty-chip {{ q.difficulty.lower() }}">{{ q.difficulty }}</span>
+        {% if q.company and q.company != 'All' %}
+          <span class="company-tag">{{ q.company }}</span>
+        {% endif %}
+      </div>
+
+      <div class="review-status-box">
+        {% if item.is_correct %}
+          <span class="answer-badge correct">✓ Correct (+1)</span>
+        {% elif item.user_answer %}
+          <span class="answer-badge incorrect">✗ Incorrect (0)</span>
+        {% else %}
+          <span class="answer-badge skipped">○ Skipped (0)</span>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('toggle_bookmark', question_id=q.id) }}" style="display:inline; margin:0;">
+          <button class="bookmark-btn" type="submit" title="Save to revision vault">
+            {{ '★ Saved' if q.id in saved_ids else '☆ Bookmark' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <h3 class="review-question-text">{{ q.question }}</h3>
+
+    <!-- OPTIONS LIST -->
+    <div class="review-options-grid">
+      {% for opt_letter, opt_val in [('A', q.option_a), ('B', q.option_b), ('C', q.option_c), ('D', q.option_d)] %}
+        {% set is_user_choice = (item.user_answer == opt_letter) %}
+        {% set is_actual_answer = (q.answer == opt_letter) %}
+        
+        <div class="review-option 
+          {% if is_actual_answer %}opt-correct{% endif %}
+          {% if is_user_choice and not is_actual_answer %}opt-wrong{% endif %}
+          {% if is_user_choice and is_actual_answer %}opt-user-correct{% endif %}">
+          
+          <span class="opt-letter">{{ opt_letter }}</span>
+          <span class="opt-text">{{ opt_val }}</span>
+          
+          <div class="opt-indicators">
+            {% if is_actual_answer %}
+              <span class="indicator-tag correct-tag">✓ Correct Answer</span>
+            {% endif %}
+            {% if is_user_choice %}
+              <span class="indicator-tag your-tag">Your Choice</span>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- DETAILED EXPLANATION BOX -->
+    <div class="explanation-box">
+      <div class="explanation-title">
+        <span class="exp-icon">💡</span> Step-by-Step Derivation & Explanation:
+      </div>
+      <p class="explanation-body">{{ q.explanation }}</p>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<div class="review-nav-bottom">
+  <a class="btn secondary" href="{{ url_for('results') }}">← Back to All Results</a>
+  <a class="btn secondary" href="{{ url_for('practice_mode') }}">Practice Weak Topics</a>
+  <a class="btn primary" href="{{ url_for('dashboard') }}">Go to Dashboard <span>→</span></a>
+</div>
+{% endblock %}

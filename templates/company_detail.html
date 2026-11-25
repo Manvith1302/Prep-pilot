@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}{{ company.name }} Exam Pattern & Questions | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="company-detail-header">
+  <div class="company-header-main">
+    <div class="company-monogram-hero" style="background: {{ company.color }};">
+      {{ company.short_name }}
+    </div>
+    <div>
+      <div class="eyebrow">COMPANY RECRUITMENT BLUEPRINT</div>
+      <h1>{{ company.name }}</h1>
+      <p class="lead">{{ company.tagline }}</p>
+    </div>
+  </div>
+  <div class="company-header-actions">
+    <div class="ctc-box">
+      <small>PACKAGE / CTC</small>
+      <strong>{{ company.ctc_range }}</strong>
+    </div>
+    <a href="{{ url_for('company_quiz', cid=company.id) }}" class="btn primary">
+      Take {{ company.short_name }} Mock Exam <span>→</span>
+    </a>
+  </div>
+</div>
+
+<!-- ELIGIBILITY & OVERVIEW BANNER -->
+<section class="detail-overview-card">
+  <div class="overview-grid">
+    <div>
+      <div class="eyebrow">ABOUT THE RECRUITMENT PROCESS</div>
+      <p>{{ company.overview }}</p>
+    </div>
+    <div class="eligibility-box">
+      <div class="eyebrow">ELIGIBILITY CRITERIA</div>
+      <p><strong>{{ company.eligibility }}</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- SELECTION PROCESS ROUNDS -->
+<div class="section-heading">
+  <div>
+    <div class="eyebrow">STEP-BY-STEP HIRING PROCESS</div>
+    <h2>Selection Rounds & Formats</h2>
+  </div>
+</div>
+
+<div class="rounds-timeline">
+  {% for round in company.rounds %}
+  <div class="round-card">
+    <div class="round-number">{{ round.round_num }}</div>
+    <div class="round-content">
+      <div class="round-top">
+        <h3>{{ round.name }}</h3>
+        <span class="round-time">⏱ {{ round.duration }}</span>
+      </div>
+      <p class="round-format"><strong>Format:</strong> {{ round.format }}</p>
+      <p class="round-rules"><strong>Evaluation / Marking:</strong> {{ round.negative_marking }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- WHICH TYPE OF QUESTIONS DOES THIS COMPANY ASK? -->
+<div class="section-heading">
+  <div>
+    <div class="eyebrow">SYLLABUS & QUESTION CLASSIFICATION</div>
+    <h2>Which Type of Questions Does {{ company.short_name }} Ask?</h2>
+  </div>
+</div>
+
+<div class="question-type-grid">
+  {% for qt in company.question_types %}
+  <article class="qtype-card">
+    <div class="qtype-header">
+      <span class="qtype-badge">{{ qt.weightage }} Weightage</span>
+      <span class="difficulty-chip {{ qt.difficulty.lower().split(' ')[0] }}">{{ qt.difficulty }}</span>
+    </div>
+    <h3>{{ qt.category }}</h3>
+    <div class="qtype-row">
+      <strong>Core Focus Topics:</strong>
+      <p>{{ qt.focus_topics }}</p>
+    </div>
+    <div class="qtype-row">
+      <strong>Question Pattern & Characteristics:</strong>
+      <p class="pattern-text">{{ qt.sample_patterns }}</p>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<!-- COMPANY SPECIFIC CRACKING TIPS -->
+<div class="section-heading">
+  <div>
+    <div class="eyebrow">PLACEMENT STRATEGY</div>
+    <h2>Expert Tips to Clear {{ company.short_name }}</h2>
+  </div>
+</div>
+
+<div class="tips-card">
+  <ul class="tips-list">
+    {% for tip in company.tips %}
+    <li>
+      <span class="tip-check">✓</span>
+      <div>{{ tip }}</div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<!-- SAMPLE QUESTIONS IN REVISION BANK -->
+{% if sample_questions %}
+<div class="section-heading">
+  <div>
+    <div class="eyebrow">SAMPLE PRACTICE QUESTIONS</div>
+    <h2>Questions Asked in {{ company.short_name }} Rounds</h2>
+  </div>
+  <a class="text-link" href="{{ url_for('practice_mode', company=company.short_name) }}">Practice all {{ company.short_name }} questions →</a>
+</div>
+
+<div class="sample-q-list">
+  {% for sq in sample_questions %}
+  <div class="sample-q-item">
+    <div class="sample-q-meta">
+      <span class="category-meta">{{ sq.category }} · {{ sq.topic }}</span>
+      <span class="difficulty-chip {{ sq.difficulty.lower() }}">{{ sq.difficulty }}</span>
+    </div>
+    <h4>{{ sq.question }}</h4>
+    <div class="sample-q-answer">
+      <strong>Correct Answer: Option {{ sq.answer }}</strong>
+      <p class="muted">{{ sq.explanation }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="cta-banner">
+  <div>
+    <h3>Ready to test your skills for {{ company.name }}?</h3>
+    <p>Simulate the exact time limit, question distribution, and pressure of the actual placement test.</p>
+  </div>
+  <a href="{{ url_for('company_quiz', cid=company.id) }}" class="btn primary">
+    Start {{ company.short_name }} Mock Exam Now <span>→</span>
+  </a>
+</div>
+
+<a class="btn secondary back-btn" href="{{ url_for('companies') }}">← Back to Company Hub</a>
+{% endblock %}

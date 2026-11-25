@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}{{ current_sheet.title }} | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">QUICK REVISION VAULT</div>
+  <h1>Formulas & Placement <em>Cheatsheets.</em></h1>
+  <p class="muted">Rapid reference guides for mental math shortcuts, reasoning deduction rules, and HR interview answers.</p>
+</div>
+
+<!-- CHEATSHEET TAB NAV -->
+<div class="cheatsheet-tabs">
+  {% for key, sheet in sheets.items() %}
+    <a href="{{ url_for('cheatsheets', tab=key) }}" class="sheet-tab {{ 'active' if active_tab == key else '' }}">
+      <span class="sheet-tab-icon">{{ ['∑', '⌘', '</>', '★'][loop.index0] }}</span>
+      <span>{{ sheet.title.split(' ')[0] }} {{ sheet.title.split(' ')[1] }}</span>
+    </a>
+  {% endfor %}
+</div>
+
+<!-- ACTIVE CHEATSHEET CONTENT -->
+<section class="cheatsheet-content">
+  <div class="sheet-banner">
+    <div>
+      <h2>{{ current_sheet.title }}</h2>
+      <p class="muted">{{ current_sheet.description }}</p>
+    </div>
+    <div class="sheet-pill-badge">
+      {{ current_sheet.sections|length }} Topic Modules
+    </div>
+  </div>
+
+  <div class="sheet-sections">
+    {% for sec in current_sheet.sections %}
+    <div class="sheet-section-card">
+      <div class="section-title-bar">
+        <h3>{{ sec.name }}</h3>
+        <span class="rule-count">{{ sec.rules|length }} Formulas / Rules</span>
+      </div>
+
+      <div class="sheet-rules-grid">
+        {% for rule in sec.rules %}
+        <div class="rule-card">
+          <span class="rule-label">{{ rule.label }}</span>
+          <div class="rule-formula-box">
+            <code>{{ rule.formula }}</code>
+          </div>
+          {% if rule.note %}
+            <p class="rule-note"><strong>Note / Example:</strong> {{ rule.note }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="cta-banner" style="margin-top: 40px;">
+  <div>
+    <h3>Put these formulas into practice!</h3>
+    <p>Test your speed and memory retention with a timed quiz or self-paced practice.</p>
+  </div>
+  <a href="{{ url_for('practice_mode') }}" class="btn primary">
+    Open Practice Mode <span>→</span>
+  </a>
+</div>
+
+<a class="btn secondary back-btn" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+{% endblock %}

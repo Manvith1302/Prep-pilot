@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}My Results & Solutions | PrepPilot{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+  <div class="eyebrow">YOUR PERFORMANCE HISTORY</div>
+  <h1>Results & <em>Solutions.</em></h1>
+  <p class="muted">Review past evaluations, track accuracy trends, and study detailed answer explanations.</p>
+</div>
+
+<div class="table-card">
+  {% if results %}
+  <table>
+    <thead>
+      <tr>
+        <th>CATEGORY / RECRUITER</th>
+        <th>TYPE</th>
+        <th>SCORE</th>
+        <th>PERCENTAGE</th>
+        <th>DATE & TIME</th>
+        <th>STATUS</th>
+        <th>SOLUTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in results %}
+      <tr>
+        <td><strong>{{ r.category }}</strong></td>
+        <td><span class="type-pill">{{ r.test_type|title }}</span></td>
+        <td>{{ r.score }} / {{ r.total }}</td>
+        <td>
+          <div class="score-bar">
+            <i style="width: {{ (r.score / r.total * 100)|round }}%"></i>
+          </div>
+          {{ (r.score / r.total * 100)|round|int }}%
+        </td>
+        <td>{{ r.taken_at.strftime('%d %b %Y, %I:%M %p') }}</td>
+        <td>
+          <span class="status {{ 'good' if r.score / r.total >= 0.8 else 'improve' }}">
+            {{ 'High Accuracy' if r.score / r.total >= 0.8 else ('Good Attempt' if r.score / r.total >= 0.5 else 'Needs Practice') }}
+          </span>
+        </td>
+        <td>
+          <a href="{{ url_for('quiz_review', result_id=r.id) }}" class="review-btn">
+            Review Solutions ↗
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No results yet. Complete a category practice test or company mock exam to see your history and solutions.</p>
+    <div style="margin-top: 15px;">
+      <a href="{{ url_for('companies') }}" class="btn primary btn-sm">Take Company Mock Test</a>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="results-actions-row">
+  <a class="btn secondary back-btn" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
+  <a class="btn primary back-btn" href="{{ url_for('practice_mode') }}">Practice Mode <span>→</span></a>
+</div>
+{% endblock %}

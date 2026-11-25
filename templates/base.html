@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}PrepPilot – Recruitment Exam Practice Platform{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="{{ url_for('index') }}">
+      <span class="brand-mark">P</span>
+      <span>PrepPilot</span>
+    </a>
+    <div class="navlinks">
+      {% if current_user %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('companies') }}">Company Prep</a>
+        <a href="{{ url_for('practice_mode') }}">Practice Mode</a>
+        <a href="{{ url_for('cheatsheets') }}">Cheatsheets</a>
+        <a href="{{ url_for('results') }}">My Results</a>
+        <a href="{{ url_for('tools_page') }}">Study Tools</a>
+        <a href="{{ url_for('leaderboard') }}">Leaderboard</a>
+        {% if current_user.role == 'admin' %}
+          <a href="{{ url_for('admin') }}" class="admin-badge-link">Admin</a>
+        {% endif %}
+        <span class="nav-user">{{ current_user.name.split(' ')[0] }}</span>
+        <a class="nav-cta" href="{{ url_for('logout') }}">Sign out</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Sign in</a>
+        <a class="nav-cta" href="{{ url_for('register') }}">Get started free</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-container">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <div class="footer-wrap">
+      <div>
+        <strong>PrepPilot</strong> · Campus Recruitment Exam Practice Platform
+      </div>
+      <div>
+        © 2026 PrepPilot · Built for placement excellence and interview readiness.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
