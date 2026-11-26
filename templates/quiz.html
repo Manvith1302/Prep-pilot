@@ -20,7 +20,7 @@
   <div id="progress-fill"></div>
 </div>
 
-<form id="quiz-form" data-category="{{ category }}" data-test-type="{{ test_type }}" data-duration="{{ duration }}">
+<form id="quiz-form" data-category="{{ category }}" data-test-type="{{ test_type }}" data-duration="{{ duration }}" onsubmit="event.preventDefault(); submitQuiz();">
   <div class="question-list">
     {% for q in questions %}
     <article class="question-card" data-question="{{ q.id }}">
@@ -37,11 +37,9 @@
 
       <div class="question-title-row">
         <h3>{{ q.question }}</h3>
-        <form method="post" action="{{ url_for('toggle_bookmark', question_id=q.id) }}" class="q-card-bm-form">
-          <button class="bookmark-btn" type="submit" title="Save for revision">
-            {{ '★ Saved' if q.id in saved_ids else '☆ Save' }}
-          </button>
-        </form>
+        <button type="button" class="bookmark-btn" onclick="toggleQuizBookmark({{ q.id }}, this)" title="Save for revision">
+          {{ '★ Saved' if q.id in saved_ids else '☆ Save' }}
+        </button>
       </div>
 
       <div class="options">
@@ -59,7 +57,9 @@
 
   <div class="quiz-submit">
     <span id="answered-count">0 of {{ questions|length }} answered</span>
-    <button class="btn primary" type="submit">Submit Test & Evaluate <span>→</span></button>
+    <button class="btn primary" id="submit-test-btn" type="button" onclick="submitQuiz()">
+      Submit Test & Evaluate <span>→</span>
+    </button>
   </div>
 </form>
 

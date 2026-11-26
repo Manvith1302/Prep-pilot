@@ -346,10 +346,17 @@ def submit_quiz():
     category = payload.get("category", "General")
     test_type = payload.get("test_type", "category")
     answers = payload.get("answers", {}) # { "question_id": "A" }
+    question_ids = payload.get("question_ids", [])
     
-    ids = [int(x) for x in answers.keys() if str(x).isdigit()]
-    questions = Question.query.filter(Question.id.in_(ids)).all()
+    if not question_ids:
+        question_ids = [int(x) for x in answers.keys() if str(x).isdigit()]
+    else:
+        question_ids = [int(x) for x in question_ids if str(x).isdigit()]
+        
+    if not question_ids:
+        return jsonify({"error": "No questions received for this test."}), 400
     
+    questions = Question.query.filter(Question.id.in_(question_ids)).all()
     if not questions:
         return jsonify({"error": "No valid questions evaluated"}), 400
     
@@ -357,7 +364,7 @@ def submit_quiz():
     review_details = []
     for q in questions:
         user_ans = answers.get(str(q.id))
-        is_correct = (user_ans == q.answer)
+        is_correct = (user_ans == q.answer) if user_ans else False
         if is_correct:
             score += 1
         review_details.append({
@@ -382,7 +389,7 @@ def submit_quiz():
     return jsonify({
         "score": score,
         "total": total,
-        "percentage": round(score * 100 / total),
+        "percentage": round(score * 100 / total) if total > 0 else 0,
         "result_id": result.id
     })
 
@@ -535,17 +542,25 @@ def tools_page():
 @login_required
 def toggle_bookmark(question_id):
     question = db.session.get(Question, question_id)
+    is_saved = False
     if not question:
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"error": "Question not found"}), 404
         flash("Question not found.", "danger")
     else:
         saved = Bookmark.query.filter_by(user_id=session["user_id"], question_id=question_id).first()
         if saved:
             db.session.delete(saved)
-            flash("Question removed from bookmarks.", "info")
+            is_saved = False
+            msg = "Question removed from bookmarks."
         else:
             db.session.add(Bookmark(user_id=session["user_id"], question_id=question_id))
-            flash("Question bookmarked for revision.", "success")
+            is_saved = True
+            msg = "Question bookmarked for revision."
         db.session.commit()
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest" or request.is_json:
+            return jsonify({"saved": is_saved, "message": msg})
+        flash(msg, "info" if not is_saved else "success")
     return redirect(request.referrer or url_for("dashboard"))
 
 @app.route("/study-plan/<int:plan_id>/toggle", methods=["POST"])
