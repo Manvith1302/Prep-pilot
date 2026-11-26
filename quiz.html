@@ -52,7 +52,9 @@
 
       <div class="quiz-submit">
         <span id="answered-count">0 of 10 answered</span>
-        <button class="btn primary" type="submit">Submit Test & Evaluate <span>→</span></button>
+        <button class="btn primary" id="submit-test-btn" type="button" onclick="submitExam()">
+          Submit Test & Evaluate <span>→</span>
+        </button>
       </div>
     </form>
 
@@ -191,10 +193,18 @@
 
       // Submit
       let submitted = false;
-      function submitExam() {
+      window.submitExam = function() {
         if (submitted) return;
+        const currentCards = [...document.querySelectorAll(".question-card")];
+        const unanswered = currentCards.filter(c => !c.querySelector("input:checked")).length;
+        if (unanswered > 0) {
+          if (!confirm(`You have ${unanswered} unanswered question(s). Are you sure you want to submit the exam?`)) {
+            return;
+          }
+        }
+
         submitted = true;
-        clearInterval(timerInt);
+        if (typeof timerInt !== "undefined") clearInterval(timerInt);
 
         let score = 0;
         const details = [];
