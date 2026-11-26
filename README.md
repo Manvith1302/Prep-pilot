@@ -1,6 +1,9 @@
 # PrepPilot – Campus Recruitment Exam Practice Platform (Enhanced Edition)
 
-🌐 **Live GitHub Pages URL**: [https://manvith1302.github.io/Prep-pilot/](https://manvith1302.github.io/Prep-pilot/)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Manvith1302/Prep-pilot)
+
+🌐 **1-Click Render Deploy URL**: [https://render.com/deploy?repo=https://github.com/Manvith1302/Prep-pilot](https://render.com/deploy?repo=https://github.com/Manvith1302/Prep-pilot)  
+🌐 **GitHub Pages Demo**: [https://manvith1302.github.io/Prep-pilot/](https://manvith1302.github.io/Prep-pilot/)
 
 PrepPilot is a comprehensive, production-ready campus placement and competitive examination preparation platform built with Python (Flask) and SQLite. It helps students master the recruitment tests of top global tech employers through targeted question banks, company-specific mock exams, instant feedback, and step-by-step mathematical & logical solution derivations.
 
